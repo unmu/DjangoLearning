@@ -1,0 +1,9 @@
+PyCharm新建项目时出错
+---------------------------
+WARNING: You are using pip version 20.0.2; however, version 20.3.3 is available. You should consider upgrading via the 'D:\Programs\Python\Python38-32\python.exe -m pip install --upgrade pip' command.
+---------------------------
+解决方法：
+  ->cmd
+  ->管理员身份打开
+  ->输入[python -m pip install --upgrade pip]
+  ->注：连接手机热点，非家用WiFi，容易TimeOut
