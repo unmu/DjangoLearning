@@ -1,9 +1,24 @@
 PyCharm新建项目时出错
 ---------------------------
-WARNING: You are using pip version 20.0.2; however, version 20.3.3 is available. You should consider upgrading via the 'D:\Programs\Python\Python38-32\python.exe -m pip install --upgrade pip' command.
+WARNING: You are using pip version 20.0.2; however, version 20.3.3 is available. You should consider upgrading via the 
+'D:\Programs\Python\Python38-32\python.exe -m pip install --upgrade pip' command.
 ---------------------------
 解决方法：
-  ->cmd
-  ->管理员身份打开
-  ->输入[python -m pip install --upgrade pip]
-  ->注：连接手机热点，非家用WiFi，容易TimeOut
+  -> cmd
+  -> 管理员身份打开
+  -> 输入python -m pip install --upgrade pip
+  -> 注：连接手机热点，非家用WiFi，容易TimeOut
+
+安装Django:
+  -> cmd
+  -> 输入pip install Django(或者pip install Django==[版本号]，否则即安装最新版本)
+
+卸载Django:
+  -> cmd
+  -> 输入pip uninstall Django
+  
+查看Django版本:
+  -> cmd
+  -> 输入python
+  -> 输入import django
+  -> 输入django.get_version() 
