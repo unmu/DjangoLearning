@@ -21,6 +21,7 @@ DATABASES = {
   -- python 3.x 安装的是PyMySQL
   -> 在__init__.py文件中写入：
     import pymysql
+    pymysql.version_info = (1, 4, 13, "final", 0)   【没加这行代码时，后续操作出错，版本问题】
     pymysql.install_as_MySQLdb()
   -> 修改settings.py的DATABASEs:
 ----------------------------------
@@ -35,4 +36,23 @@ DATABASES = {
     }
 }
 ----------------------------------
-  
+
+配置应用app:
+  -> cmd
+  -> 找到该Django项目下的manage.py所在目录
+     如依次输入：D:
+                cd D:\PycharmProjects\DjangoTest
+  -> 输入python manage.py startapp myApp
+  对应的PyCharm将看到名为myApp的文件夹(应用)
+  修改settings.py中的INSTALLED_APPS，添加app名
+------------------------------------
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'myApp'
+]
+------------------------------------
