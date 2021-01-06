@@ -44,7 +44,9 @@ DATABASES = {
                 cd D:\PycharmProjects\DjangoTest
   -> 输入python manage.py startapp myApp
   对应的PyCharm将看到名为myApp的文件夹(应用)
-  修改settings.py中的INSTALLED_APPS，添加app名
+
+激活应用:
+  -> 修改settings.py中的INSTALLED_APPS，添加app名
 ------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
