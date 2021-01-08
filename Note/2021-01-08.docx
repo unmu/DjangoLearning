@@ -20,3 +20,12 @@ class Students(models.Model):
     isDelete = models.BooleanField(default=False)
     sgrade = models.ForeignKey("Grades", on_delete=models.CASCADE)    # 自动建外键，值自动增加
 ------------------------------
+
+生成迁移文件：
+    -> cmd
+    -> 输入python manage.py makemigrations
+myApp下的migrations文件夹多了py
+
+执行迁移：
+    -> cmd
+    -> 输入python manage.py migrate
