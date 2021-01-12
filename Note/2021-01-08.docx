@@ -68,4 +68,5 @@ class Students(models.Model):
             stu1.ssname = "Tom"
             stu1.sgrade = grade1    # 关联
             stu1.save()
-            grade1.students_set.all()   # [查询] 对象名.关联的类名小写.set_all() 
+            grade1.students_set.all()   # [查询] 对象名.关联的类名小写.set_all()
+            stu2 = grade1.students_set.create(sname=u"Emma", sgender=True, scontent=u'123', sage=19)    # [添加]
