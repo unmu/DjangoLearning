@@ -34,4 +34,25 @@ admin站点管理
     admin.site.register(Grades)
     admin.site.register(Students)
     ------------------------
-    
+  自定义管理页面：
+    在admin.py中：
+    1. 属性
+-------------------------------------
+class GradesAdmin(admin.ModelAdmin):
+    # 列表
+    list_display = ['pk', 'gname', 'gdate', 'ggirlnum', 'gboynum', 'isDelete']  # 显示字段
+    list_filter = ['gname']     # 过滤字段
+    search_fields = ['gname']   # 搜索字段
+    list_per_page = 8   # 分页数
+    # 添加、修改
+    # fields = ['ggirlnum', 'gboynum', 'gname', 'gdate', 'isDelete']  # 属性先后顺序
+    fieldsets = [   # 属性分组；fields和fieldsets不能同时使用
+        ("num", {"fields": ['ggirlnum', 'gboynum']}),
+        ("base", {"fields": ['gname', 'gdate', 'isDelete']}),
+    ]
+
+
+admin.site.register(Grades, GradesAdmin)  # 调用该模式
+-------------------------------------- 
+    2. 关联对象
+     
