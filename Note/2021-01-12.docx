@@ -1,0 +1,37 @@
+启动服务器
+  -> cmd
+  -> manage.py父级目录下
+  -> 输入python manage.py runserver ip:port
+  【ip:port各自可不写，ip默认为本机ip，port(端口号)默认为8000】
+  【此为纯python写的轻量级web服务器，仅在开发测试时使用】
+
+admin站点管理
+  内容发布：负责添加、修改、删除内容
+  公告访问
+  配置admin应用：
+    settings.py中INSTALLED_APPS -> 'django.contrib.admin'
+  创建管理员用户：
+    -> python manage.py createsuperuser
+    -> 按要求输入..
+    【现在启动服务器即可访问 http://127.0.0.1:8000/admin，登录刚刚注册的账号】
+  可汉化：
+    修改settings.py，把
+    ------------------------
+    LANGUAGE_CODE = 'en-us'
+    TIME_ZONE = 'UTC'
+    ------------------------
+    替换为：
+    ------------------------
+    LANGUAGE_CODE = 'zh-Hans'
+    TIME_ZONE = 'Asia/Shanghai'
+    ------------------------
+    刷新一下网址即可
+  管理数据表：
+    修改admin.py
+    ------------------------
+    from .models import Grades, Students
+    # 注册
+    admin.site.register(Grades)
+    admin.site.register(Students)
+    ------------------------
+    
