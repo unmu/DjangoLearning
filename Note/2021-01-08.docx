@@ -21,11 +21,51 @@ class Students(models.Model):
     sgrade = models.ForeignKey("Grades", on_delete=models.CASCADE)    # 自动建外键，值自动增加
 ------------------------------
 
-生成迁移文件：
-    -> cmd
-    -> 输入python manage.py makemigrations
-myApp下的migrations文件夹多了py
+生成数据表（数据库中）
+    生成迁移文件：
+        -> cmd
+        -> manage.py父级目录下
+        -> 输入python manage.py makemigrations
+    myApp下的migrations文件夹多了py
 
-执行迁移：
-    -> cmd
-    -> 输入python manage.py migrate
+    执行迁移：
+        -> cmd
+        -> manage.py父级目录下
+        -> 输入python manage.py migrate
+    此时数据库中新建了数据表
+    
+测试数据操作
+    进入python shell
+        -> cmd
+        -> manage.py父级目录下
+        -> 输入python manage.py shell
+    引入包
+    -------------------
+    from myApp.models import Grades,Students
+    from django.utils import timezone
+    from datetime import *
+    -------------------
+    查询
+        输入:类名.objects.all()，如Grades.objects.all()
+    添加(创建一个模型类的对象实例)
+        如输入:
+            grade1 = Grades()
+            grade1.gname = "python"
+            grade1.gdate = datetime(year=1111, month=1, day=1)
+            grade1.save()       # 保存
+    查看某个对象
+        输入：类名.objects.get(条件)，如Grades.objects.get(pk=1)
+    修改
+        输入：
+            模型对象.属性 = 新值
+            模型对象.save()
+    删除(物理删除--数据库的数据被删除)
+        输入：模型对象.delete()
+    关联对象   
+        如输入：
+            grade1 = Grades.objects.get(pk=1)
+            stu1 = Students()
+            stu1.ssname = "Tom"
+            stu1.sgrade = grade1    # 关联
+            stu1.save()
+            grade1.students_set.all()   # [查询] 对象名.关联的类名小写.set_all() 
