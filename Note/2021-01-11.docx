@@ -1,2 +1,21 @@
-卸载MySQL并重装
+Django 3.1兼容mysql 5.6及以上版本，而不再支持5.6以下版本。要卸载已有MySQL再重装了
 
+卸载MySQL
+1.
+-> 控制面板
+-> 卸载所有与mysql相关的程序
+2.
+-> 找到mysql安装路径
+-> 将该文件夹全部删除
+3.
+-> Windows -> 注册表
+-> 删除 HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Eventlog\Application\MySQL 文件夹
+-> 若以下文件夹存在，则删除
+  HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Services\Eventlog\Application\MySQL
+  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application\MySQL
+【重启电脑后检查一下是否删除成功】
+4.
+-> 搜索地址 C:\ProgramData\MySQL (它是隐藏地址)
+-> 删除此文件夹下的所有内容
+5.
+重启
