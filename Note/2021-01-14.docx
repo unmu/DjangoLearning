@@ -1,0 +1,39 @@
+视图的基本使用
+  概述：在django中，视图对web请求进行回应；视图就是一个python函数，在view.py文件中定义
+  定义视图views.py：
+-------------------------------------
+from django.http import HttpResponse
+
+def index(request):  # 请求体
+    return HttpResponse('a view')
+-------------------------------------
+  配置url:
+    修改主目录下的urls.py
+-------------------------------------
+from django.contrib import admin
+from django.urls import path
+from django.conf.urls import url, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    url(r'^', include('myApp.urls'))    # 输入的网址不是 http://127.0.0.1:8000/admin?，则去myApp.urls,py里匹配
+]
+-------------------------------------
+    在myApp应用目录下创建一个urls.py文件
+-------------------------------------
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    # 正则匹配
+    url(r'^$', views.index),    # 输入网址 http://127.0.0.1:8000
+    url(r'^(\d+)/$', views.detail),   # 如输入网址 http://127.0.0.1:8000/89
+]
+-------------------------------------
+    在 views.py里加上
+-------------------------------------
+def detail(request, num):
+    return HttpResponse('detail-%s' % num)  # num对应(\d+)
+-------------------------------------
+    见其，路径匹配机制
+ 
