@@ -55,4 +55,37 @@ class GradesAdmin(admin.ModelAdmin):
 admin.site.register(Grades, GradesAdmin)  # 调用该模式
 -------------------------------------- 
     2. 关联对象
-     
+      如，在admin.py中编写代码：
+--------------------------------------
+class StudentsInfo(admin.StackedInline):    # admin.TabularInline 不同的布局样式
+    model = Students
+    extra = 2
+
+class GradesAdmin(admin.ModelAdmin):
+    inlines = [StudentsInfo]        # 在创建班级时添加两个学生
+    # ... 
+--------------------------------------
+      改进页面展示效果，学生性别栏用'男/女'表示(替换布尔型数据默认的显示样式)
+--------------------------------------
+class StudentsAdmin(admin.ModelAdmin):
+    def gender(self):
+        if self.sgender:
+            return '男'
+        else:
+            return '女'
+    gender.short_description = '性别'     # 设置页面列的名称
+
+    list_display = ['pk', 'sname', 'sage', gender, 'scontent', 'sgrade', 'isDelete']
+    list_per_page = 5
+--------------------------------------
+      更改执行动作的位置，默认位于上方
+--------------------------------------
+class StudentsAdmin(admin.ModelAdmin):
+    actions_on_top = False
+    actions_on_bottom = True
+    ...
+--------------------------------------
+    3. 使用装饰器完成注册
+      如
+      删除 admin.site.register(Students, StudentsAdmin)
+      在 class StudentsAdmin(admin.ModelAdmin): 上方加上 @admin.register(Students)
