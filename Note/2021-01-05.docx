@@ -22,3 +22,7 @@ WARNING: You are using pip version 20.0.2; however, version 20.3.3 is available.
   -> 输入python
   -> 输入import django
   -> 输入django.get_version() 
+  
+  cmd方式创建Django项目
+    -> cd 【待创建项目的目录】
+    -> django-admin startproject project
