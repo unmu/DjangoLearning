@@ -171,4 +171,31 @@ class Students(models.Model):
         return stu
 ------------------------------------
       2. 在自定义管理器中添加一个类方法
+myApp/views.py        
+------------------------------------
+def addStudent2(request):
+    grade = Grades.objects.get(pk=1)
+    stu = Students.stuObj2.createStudent("Jack", 5, True, grade, "Hahahaha")
+    stu.save()
+    return HttpResponse('Students.stuObj2.createStudent')
+------------------------------------
+myApp/urls.py
+------------------------------------
+urlpatterns = [
+    url(r'^addstudent2/$', views.addStudent2),
+]
+------------------------------------
+myApp/models.py
+------------------------------------
+class StudentsManager(models.Manager):
+    # ...
+    def createStudent(self, name, age, gender, grade, content, isD=False):
+        stu = self.model()
+        stu.sname = name
+        stu.sage = age
+        stu.sgender = gender
+        stu.sgrade = grade
+        stu.scontent = content
+        return stu
+------------------------------------
   
