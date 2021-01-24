@@ -15,7 +15,7 @@
     返回查询集的方法称为过滤器
       all() -- 返回查询集中的所有数据
       filter() -- 返回符合条件的数据
-        filter(key=value, key=value)
+        filter(key=value, key=value)  # 且
         filter(key=value).filter(key=value)
       exclude() -- 过滤掉符合条件的数据
       order_by() -- 排序
@@ -51,3 +51,69 @@ myApp/urls.py
     查询集的缓存
       每个查询集都包含一个缓存，来最小化对数据库访问；在新建的查询集中，缓存首次为空，第一次对查询集求值，会发生数据缓存，
       django会将查询出来的数据做一个缓存，并返回查询结构，以后的查询直接使用查询集的缓存
+    字段查询
+      概述
+        实现了SQL中的where语句，作为方法filter(), exclude(), get()的参数
+        语法 -- 属性名称_比较运算符=值
+        外键 -- 属性名_id
+        转义 -- like语句中使用%是为了匹配占位，匹配数据中的% {where like '\%'}
+      比较运算符
+        exact
+          判断，大小写敏感
+          filter(isDelete=False)
+        contains
+          是否包含，大小写敏感
+--------------------------------------------     
+def stuSearch(request):
+    stuList = Students.stuObj2.filter(sname__contains='J')
+    return render(request, 'myApp/students.html', {'students': stuList})
+--------------------------------------------
+        startwith, endwith
+          以value开头或结尾，大小写敏感
+        ** 以上四个在前面加上i，就表示不区分大小写（iexcact, icontains...）
+        isnull, isnotnull
+          是否为空
+          filter(sname__isnull=False)
+        in
+          是否包含在范围内
+          stuList = Students.stuObj2.filter(pk__in=[2, 4, 6])
+        gt, gte, lt, lte
+          大于、大于等于、小于、小于等于
+          stuList = Students.stuObj2.filter(sage__gt=6)
+        year, month, day, week_day, hour, minute, second
+        跨关联查询
+          处理join查询 -- 语法 -- 模型类名_属性名_比较运算符
+--------------------------------------------
+# scontent中带有Jerry的数据属于的班级
+grade = Grades.objects.filter(students__scontent__contains='Jerry')
+--------------------------------------------
+      聚合函数
+        使用aggregate()函数返回聚合函数的值
+          Max, Min, Sum
+--------------------------------------------     
+from django.db.models import Max
+        
+maxAge = Students.stuObj2.aggregate(Max('sage'))
+--------------------------------------------     
+      F对象
+        可以使用模型的A属性与B属性进行比较
+-------------------------------------------- 
+from django.db.models import F, Q
+
+def gradesEqNum(request):
+    g = Grades.objects.filter(ggirlnum__lt=F('gboynum'))
+    # print(g)
+    return HttpResponse('Grades.objects.filter')
+--------------------------------------------     
+        支持对象的算术运算
+        g = Grades.objects.filter(ggirlnum__lt=F('gboynum')+5)
+      Q对象
+        过滤器的方法中的关键字参数，添加为And模式
+        需求 -- 进行or查询
+        解决 -- 使用Q对象
+--------------------------------------------   
+    stuList = Students.stuObj2.filter(Q(pk__lte=1) | Q(sage__lt=10))
+--------------------------------------------     
+        filter里只有一个Q对象时，没有发挥其or的作用
+        ~Q()表示取非
+          stuList = Students.stuObj2.filter(~Q(pk__lte=1))
