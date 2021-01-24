@@ -1,0 +1,53 @@
+模型查询
+  概述
+    查询集表示从数据库获取的对象集合
+    查询集可以有多个过滤器
+    过滤器是一个函数，基于所给的参数限制查询集结果
+    从SQL角度看，查询集合select语句等价，过滤器就像where条件
+  查询集
+    在管理器上调用过滤器方法返回查询集
+    查询集经过过滤器筛选后返回新的查询集，所以可以写成链式调用
+    惰性执行 -- 创建查询集不会带来任何数据的访问，直到调用数据时，才会访问数据
+    直接访问数据情况
+      1. 迭代
+      2. 序列化
+      3. 与if合用
+    返回查询集的方法称为过滤器
+      all() -- 返回查询集中的所有数据
+      filter() -- 返回符合条件的数据
+        filter(key=value, key=value)
+        filter(key=value).filter(key=value)
+      exclude() -- 过滤掉符合条件的数据
+      order_by() -- 排序
+      values() -- 一条数据就是一个对象（字典），返回一个列表
+    返回单个数据
+      get() -- 返回一个满足条件的对象。
+               如果没有找到符合条件的对象，会引发异常-模型类.DoesNotExist异常
+               如果找到多个对象，会引发异常-模型类.MultipleObjectReturned异常
+      count() -- 返回当前查询集中的对象个数
+      first() -- 返回查询集中的第一个对象
+      last() -- 返回查询集中的最后一个对象
+      exist() -- 判断查询集中是否有数据，如果有数据返回True
+    限制查询集
+      查询就返回列表，可以使用下标的方法
+myApp/views.py
+--------------------------------------------      
+def students2(request):
+    stuList = Students.stuObj2.all()[0:3]       # 左闭右开，不能用负数
+    return render(request, 'myApp/students.html', {'students': stuList})
+--------------------------------------------      
+      分页效果
+myApp/views.py
+--------------------------------------------  
+def stuPage(request, page):
+    page = int(page)
+    stuList = Students.stuObj2.all()[(page-1)*3:page*3]
+    return render(request, 'myApp/students.html', {'students': stuList})
+--------------------------------------------      
+myApp/urls.py
+--------------------------------------------
+    url(r'^stu/(\d+)/$', views.stuPage),
+--------------------------------------------
+    查询集的缓存
+      每个查询集都包含一个缓存，来最小化对数据库访问；在新建的查询集中，缓存首次为空，第一次对查询集求值，会发生数据缓存，
+      django会将查询出来的数据做一个缓存，并返回查询结构，以后的查询直接使用查询集的缓存
