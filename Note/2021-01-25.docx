@@ -103,5 +103,106 @@ def get2(request):
     c = request.GET.get('c')
     return HttpResponse(a1 + ' ' + a2 + ' ' + c)
 -----------------------------------
-        
       POST属性
+        使用表单提交实现post请求
+templates/myApp/register.html
+-----------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+    <form action="register/" method="post">
+        name: <input type="text" name="name" value="" />
+        <hr/>
+        gender: <input type="radio" name="gender" value="1" />M
+                <input type="radio" name="gender" value="0" />F
+        <hr/>
+        age: <input type="text" name="age" value=""/>
+        <hr/>
+        hobby: <input type="checkbox" name="hobby" value="sing"/>sing
+                <input type="checkbox" name="hobby" value="draw" />draw
+                <input type="checkbox" name="hobby" value="dance" />dance
+        <hr/>
+        <input type="submit" value="submit" />
+    </form>
+</body>
+</html>   
+-----------------------------------
+myApp/views.py
+-----------------------------------
+def showRegister(request):
+    return render(request, 'myApp/register.html')
+
+def register(request):
+    name = request.POST.get('name')
+    gender = request.POST.get('gender')
+    age = request.POST.get('age')
+    hobby = request.POST.get('hobby')
+    return HttpResponse('register')
+-----------------------------------
+myApp/urls.py
+-----------------------------------      
+    url(r'^register/$', views.showRegister),
+    url(r'^register/register/$', views.register),
+-----------------------------------
+      关闭csrf - [settings.py]
+-----------------------------------
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+-----------------------------------
+      HttpResponse对象
+        作用：给浏览器返回数据
+        HttpRequest对象由django创建，HttpResponse对象由程序员创建
+        返回用法
+          1. 不调用模板，直接返回数据
+            return HttpResponse('a view')
+          2. 调用模板
+            使用render方法
+              原型 -- render(request, templateName[, context])
+              作用 -- 结合数据和模板，返回完整的html
+              参数
+                request -- 请求体对象
+                templateName -- 模板路径
+                context -- 传递给需要渲染在模板上的数据
+              如 return render(request, 'myApp/register.html')
+        属性
+          content -- 表示返回的内容的类型
+          charset -- 编码格式
+          status_code -- 响应状态码：200, 304, 404
+          content-type -- 指定输出的MIME类型
+        方法
+          init -- 使用页面内容实例化HttpResponse对象
+          write(content) -- 以文件的形式写入
+          flush() -- 以文件的形式输出缓冲区
+          set_cookie(key, value='', max_age=None, exprise=None) -- 
+          delete_cookie -- 删除cookie；如果删除一个不存在的key，就当什么都没发生
+-----------------------------------
+# step1
+def cookieTest(request):
+    res = HttpResponse()
+    cookie = res.set_cookie('django', 'test')
+    return res
+-----------------------------------
+# step2
+def cookieTest(request): 
+    res = HttpResponse()
+    cookie = request.COOKIES
+    res.write('<h1>' + cookie['django'] + '</h1>')
+    return res
+-----------------------------------
+          子类HttpResponseRedirect
+            功能 -- 重定向，服务器的跳转
+              
+          子类JSONResponse
+        状态保持
+          
