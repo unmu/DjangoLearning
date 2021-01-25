@@ -202,7 +202,29 @@ def cookieTest(request):
 -----------------------------------
           子类HttpResponseRedirect
             功能 -- 重定向，服务器的跳转
-              
+-----------------------------------
+from django.http import HttpResponseRedirect
+
+def redirect1(request):
+    return HttpResponseRedirect('/redirect2')
+
+def redirect2(request):
+    return HttpResponse('redirect2')
+# 当访问 http://127.0.0.1:8000/redirect1 时，页面会跳转至 http://127.0.0.1:8000/redirect2/
+-----------------------------------
+            简结写法 -- redirect(to)
+-----------------------------------
+from django.shortcuts import redirect
+
+def redirect1(request):
+    # return HttpResponseRedirect('/redirect2')
+    return redirect('/redirect2')
+
+def redirect2(request):
+    return HttpResponse('redirect2')
+# 同上
+-----------------------------------
           子类JSONResponse
+            
         状态保持
           
