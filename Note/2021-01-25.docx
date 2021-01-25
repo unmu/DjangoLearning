@@ -1,0 +1,107 @@
+视图
+  作用 -- 视图接受web请求，并响应web请求
+  本质 -- 视图是python中的一个函数
+  响应
+    过程
+======================================
+                      用户在浏览器中输入网址（127.0.0.1:8000/index.html）
+---      网址     ---> django获取网址信息，去除IP与端口（index）
+---虚拟路径与文件名---> url管理器，逐个匹配urlconf，记录视图函数名
+---  视图函数名   ---> 视图管理器，找到对应的视图去执行，返回结果给浏览器
+---  响应的数据   ---> 页面
+======================================
+    网页
+      1. 重定向
+      2. 错误视图
+        404
+        500
+    JSON数据
+  url配置
+    配置流程
+      制定根级url配置文件
+        settings.py文件中的ROOT_URLCONF，默认已实现
+      urlpatterns
+        一个url实例的列表
+        url对象
+          正则表达式
+          视图名称
+          名称
+      url匹配正则的注意事项
+        1. 如果想要从url中获取一个值，需对正则加小括号()
+        2. 匹配正则前方不需要加反斜杠/
+        3. 正则前需要加r表示字符串不转义
+    引入其他url配置
+      在应用中创建urls.py文件，定义本应用的url配置，在工程urls.py中使用include()方法
+        url(r'^', include('myApp.urls')),
+      匹配过程
+        urls.py -- myApp/urls.py
+    url的反向解析
+      概述 -- 如果在视图、模板中使用了硬编码链接，在url配置发生改变时，动态生成链接的地址
+      解决 -- 在使用链接时，通过url配置的名称，动态生成url地址
+      作用 -- 使用url模板
+  视图函数
+    定义视图
+      本质 -- 一个函数
+      视图参数 -- 一个HttpRequest的实例；通过正则表达式获取的参数
+      位置 -- 一般在views.py下定义
+    错误视图
+      404 -- 找不到网页时返回（url匹配不成功）
+             可自定义视图，templates目录下定义404.html
+-----------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404页面</title>
+</head>
+<body>
+    <h1>页面丢失</h1>
+    <h2>{{ request_path }}</h2>  {#导致错误的网址#}
+</body>
+</html>
+-----------------------------------
+             配置settings.py
+-----------------------------------
+DEBUG = False         # DEBUG设置为True时，不会调用404.html
+
+ALLOWED_HOSTS = ['*']
+-----------------------------------
+      500 -- 在视图代码中出现错误（服务器代码）
+      400 -- 错误出现在客户的操作
+    HttpRequest对象
+      服务器接受http请求后，会根据报文创建HttpRequest对象；视图的第一个参数就是HttpRequest对象；由django创建，之后调用视图时传递给视图
+      属性
+        path -- 请求的完整路径（不包括域名和端口）
+        methtod -- 表示请求的方式，常用的有GET，POST
+        encoding -- 表示浏览器提交的数据的编码方式，一般为utf-8
+        GET -- 类似于字典的对象，包含了get请求的所有参数
+        POST -- 类似于字典的对象，包含了post请求的所有参数
+        FILES -- 类似于字典的对象，包含了所有上传的文件
+        COOKIES -- 字典，包含所有的cookie
+        session -- 类似字典的对象，表示当前会话
+      方法 -- is_ajax() -- 如果是通过XMLHttpRequest发起的，返回True
+      QuertDict对象 -- request对象中的GET, POST都属于QuertDict对象
+        方法
+          get() -- 作用：根据键获取值；只能获取一个值
+          getlist() -- 将键的值以列表的形式返回；可以获取多个值
+      GET属性
+        获取浏览器传递过来给服务器的数据
+        * http://127.0.0.1:8000/get1?a=1&b=2&c=3
+-----------------------------------
+def get1(request):
+    a = request.GET.get('a')
+    b = request.GET.get('b')
+    c = request.GET.get('c')
+    return HttpResponse(a + ' ' + b + ' ' + c)
+-----------------------------------
+        * http://127.0.0.1:8000/get2?a=1&a=2&c=3
+-----------------------------------
+def get2(request):
+    a = request.GET.getlist('a')
+    a1 = a[0]
+    a2 = a[1]
+    c = request.GET.get('c')
+    return HttpResponse(a1 + ' ' + a2 + ' ' + c)
+-----------------------------------
+        
+      POST属性
