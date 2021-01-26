@@ -213,6 +213,7 @@ def redirect2(request):
 # 当访问 http://127.0.0.1:8000/redirect1 时，页面会跳转至 http://127.0.0.1:8000/redirect2/
 -----------------------------------
             简结写法 -- redirect(to)
+                       to 推荐使用反向解析
 -----------------------------------
 from django.shortcuts import redirect
 
@@ -224,7 +225,107 @@ def redirect2(request):
     return HttpResponse('redirect2')
 # 同上
 -----------------------------------
-          子类JSONResponse
-            
+          子类JsonResponse
+            返回json数据，一般用于异步请求
+            __init__(self, date)
+              date -- 字典对象
+              Content-type 类型为 application/json
+              
         状态保持
-          
+          概述
+            Http协议是无状态的，每次请求都是一次新的请求，不记得以前的请求
+            客户端与服务器端的一次通信就是一次会话
+            实现状态保持，在客户端或服务端存储有关会话的数据
+            存储方式
+              cookie -- 所有数据都存储在客户端，不建议存敏感数据
+              session -- 所有数据存储在服务端，在客户端用cookie存储session_id
+            目的
+              在一段时间内跟踪请求者的状态，可以实现跨页面访问当前的请求者的数据
+            不同的请求者不会共享这个数据，与请求者一一对应
+          启用session
+            settings.py，默认启用
+-----------------------------------
+INSTALLED_APPS = [
+    # ...
+    'django.contrib.sessions',
+    # ...
+]
+
+MIDDLEWARE = [
+    # ...
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # ...
+]
+-----------------------------------
+          使用session
+            每个HttpResponse对象都有一个session属性，是一个类似字典的对象
+            get(key, default=None) -- 根据键获取session值
+            clear() -- 情空所有会话
+            flush() -- 删除当前的会话并删除会话的cookie
+templates/myApp/main.html
+-----------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mine</title>
+</head>
+<body>
+    <h1>Welcome: {{ username }}</h1>
+    <a href="/login">login</a>
+</body>
+</html>
+-----------------------------------
+templates/myApp/login.html
+-----------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+    <form action="showmain/" method="post">
+        <input type="text" name="username" />
+        <input type="submit" value="submit" />
+    </form>
+</body>
+</html>
+-----------------------------------
+myApp/views.py
+-----------------------------------
+def main(request):
+    # remove session
+    username = request.session.get('username', 'Passenger')
+    return render(request, 'myApp/main.html', {'username': username})
+
+def login(request):
+    return render(request, 'myApp/login.html')
+
+def showMain(request):
+    username = request.POST.get('username')
+    # save session
+    request.session.set_expiry(10)    # 定义10秒后注销
+    request.session['username'] = username
+    return redirect('/main/')
+-----------------------------------
+myApp/urls.py
+-----------------------------------
+    url(r'^main/$', views.main),
+    url(r'login/$', views.login),
+    url(r'showmain/$', views.showMain),
+-----------------------------------
+
+          设置过期时间
+            set_expiry(value)
+            如果不设置，两个星期后过期
+            可设置 1. 整数 - 秒
+                  2. 时间对象
+                  3. 0 - 关闭浏览器时失效
+                  4. None - 永不过期
+          存储session的位置
+            数据库 -- 默认存储在数据库中，
+            缓存 -- 值存储在本地内存中，如果丢失不能找回，比数据库快
+            数据库和缓存 -- 优先从本地缓存中读取，读取不到再去数据库中获取
+          使用redis缓存session 
+
