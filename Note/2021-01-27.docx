@@ -1,0 +1,94 @@
+定义模板
+  变量
+    视图传递给模板的数据
+    要遵守标识符规则
+    语法 -- {{ var }}
+    如果使用的变量不存在，插入的就是空字符串
+    在模板中使用点语法 -- 字典；属性或方法；数字索引
+    在模板中调用对象的方法 -- 不能传递参数
+templates/myApp/index.html
+---------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+    <h2>num = {{ num }}</h2>
+    <h2>{{ stu.getName }}</h2>
+</body>
+</html>
+---------------------------------------
+myApp/urls.py
+---------------------------------------
+url(r'^students3/$', views.students3),
+---------------------------------------
+myApp/models.py
+---------------------------------------
+class Students(models.Model):
+    # ...
+    def getName(self):  # 如果写成 def getName(self, str)， index.html上就不能用到stu.getName
+        return self.sname
+---------------------------------------
+myApp/views.py
+---------------------------------------
+def students3(request):
+    stu = Students.stuObj.get(pk=1)
+    return render(request, 'myApp/index.html', {'stu': stu, 'num': 10})
+---------------------------------------
+  标签
+    语法 -- {% tag %}
+    作用 -- 在输出中创建文本；控制逻辑和循环
+    1. if 
+      格式
+      ----------------------
+        {% if表达式 %}
+          语句
+        {% endif %}
+      ----------------------
+      ----------------------
+        {% if表达式 %}
+          语句1
+        {% else %}
+          语句2
+        {% endif %}
+      ----------------------
+      ----------------------
+        {% if表达式1 %}
+          语句1
+        {% elif表达式2 %}
+          语句2
+        ...
+        {% elif表达式n %}
+          语句n
+        {% else表达式e %}
+          语句e
+        {% endif %}
+      ----------------------
+    2. for
+      格式
+      ----------------------
+        {% for 变量 in 列表 %}
+          语句
+        {% endfor %}
+      ----------------------
+      ----------------------
+      {% for 变量 in 列表 %}
+        语句1
+      {% empty %}   # 列表为空或不存在时执行
+        语句2
+      {% endfor %}
+      ----------------------
+      ----------------------
+      {{ forloop.counter}}    # 当前第几次循环
+      ----------------------
+    3. comment
+    4. ifequal, ifnotequal
+    5. include
+    6. url
+    7. crsf_token
+    8. block, extends
+    9. autoescape
+  过滤器
+  注释
