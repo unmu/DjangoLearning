@@ -84,11 +84,68 @@ def students3(request):
       {{ forloop.counter}}    # 当前第几次循环
       ----------------------
     3. comment
+      格式
+      ----------------------
+        {% comment %}
+          注释(多行)
+        {% endcomment %}
+      ----------------------
     4. ifequal, ifnotequal
+      作用 -- 判断是否相等或不相等
+      格式
+      ----------------------
+        {% ifequal 值1 值2 %}
+          语句
+        {% endifequal %}
+      ----------------------
     5. include
+      作用 -- 夹中模板并以标签内的参数渲染
+      格式
+        {% include '模板目录' 参数1 参数2 %}
     6. url
+      作用 -- 反向解析
+      格式
+        {% url 'namespace: name' p1 p2 %}
     7. crsf_token
+      作用 -- 用于跨站请求伪造保护
+      格式
+        {% csrf_token %}
     8. block, extends
+      作用 -- 用于模板的继承
     9. autoescape
+      作用 -- 用于HTML转义
   过滤器
+    语法 -- {{ var|过滤器}}
+    作用 -- 在变量被显示前修改它
+    1. lower
+    2. upper
+    过滤器可以传递参数，参数用引号引起来
+      join
+        格式 -- 列表|join:'#'
+      ----------------------
+      def students(request):
+          stuList = Students.stuObj2.all()
+          return render(request, 'myApp/students.html', {'students': stuList, 'str': 'qwertyuiop', 'list': ['123', '345', '567']})
+      ----------------------
+      <h2>{{ str|upper }}</h2>
+      <h3>{{ list|join:'#' }}</h3>
+      ----------------------
+    如果一个变量没有被提供，或者值为False、空('')，可以使用默认值 - default
+      格式
+        {{ var|default:'123' }}
+    根据给定格式转换日期为字符串 - date
+      格式
+        {{ dateVal|date:'y-m-d' }}
+    html转义
+    加减乘除
+      {{ num|add:10 }}  # 显示的是 num+10
+      {% widthratio num digit1 digit2 %}  # 显示的是 num/digit1*digit2
   注释
+    单行注释
+      语法
+        {# 注释内容 #}
+    多行注释
+      comment
+
+反向解析
+  
