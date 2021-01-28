@@ -14,4 +14,141 @@ myApp/urls.py
   访问 http://127.0.0.1:8000/main/ 点击 detail
   
 模板继承
-  
+  作用 -- 模板继承可以减少页面的内容的重复定义，实现页面的重用
+  block标签
+    在父模板中预留区域，子模板去填充
+    语法
+      {% block 标签名(id) %}
+      {% endblock 标签名 %}
+  extends标签
+    继承模板，需要写在模板文件的第一行
+    语法
+      {% extends '父模板路径' %}
+templates/myApp/main.html
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mine</title>
+</head>
+<body>
+    {% extends 'myApp/base.html' %}
+
+    {%  block main %}
+    <h1>Welcome: {{ username }}</h1>
+    <a href="/login">login</a>
+    <a href="/logout" >logout</a>
+    <a href="{% url 'myApp:detail' 2 %}">detail</a>
+    {%  endblock main %}
+</body>
+</html>
+---------------------------------------------
+templates/myApp/base.html
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="header" style="background-color: cadetblue; height: 100px">header</div>
+    <div id="main">
+        {% block main %}
+
+        {% endblock main %}
+    </div>
+    <div id="footer" style="background-color: cornflowerblue; height: 100px">footer</div>
+</body>
+</html>
+---------------------------------------------
+  访问 http://127.0.0.1:8000/main/
+  * 可在一个页面定义多个block
+
+html转义
+  对于
+---------------------------------------------
+return render(request, 'myApp/students.html', {'code': '<h1>asdfghjkl</h1>'})
+---------------------------------------------
+    # 未转义
+    {{ code }}
+    {{ code|escape }}
+    # 转义
+    {{ code|safe }}
+    # 可多行代码转义
+    {% autoescape off %}
+        {{ code }}
+    {% endautoescape %}
+---------------------------------------------
+    
+csrf
+  跨站请求伪造
+    某些恶意网站包含链接、表单、按钮、JS会利用登录用户在浏览器中认证，从而攻击服务
+    1. 在 settings.py - MIDDLEWARE 中加上
+        'django.middleware.csrf.CsrfViewMiddleware',
+    2. form表单里加上 {% csrf_token %}
+原 login.html
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+    <form action="showmain/" method="post">
+        {# {% csrf_token %} #}
+        <input type="text" name="username" />
+        <br/>
+        <input type="password" name="pwd" />
+        <br/>
+        <input type="submit" value="submit" />
+    </form>
+</body>
+</html>
+---------------------------------------------
+不使用csrf时，在本地copy项目代码如下
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+    <form action="http://127.0.0.1:8000/login/showmain/" method="post">
+
+        <input type="text" name="username" />
+        <br/>
+        <input type="password" name="pwd" />
+        <br/>
+        <input type="submit" value="submit" />
+    </form>
+</body>
+</html>
+---------------------------------------------
+可实现页面访问，提交表单后未被禁止访问
+使用csrf时，在本地copy项目代码如下
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+    <form action="showmain/" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="BPNsHkjennu4smQgWrB9y3fBoyL8h3KqLI2hBIWsIhSZvuu1wzSVp70aHqWIM0w9">
+        <input type="text" name="username" />
+        <br/>
+        <input type="password" name="pwd" />
+        <br/>
+        <input type="submit" value="submit" />
+    </form>
+</body>
+</html>
+---------------------------------------------
+没有绝对安全
+
+
