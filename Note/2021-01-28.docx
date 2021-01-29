@@ -158,13 +158,54 @@ csrf
 Django高级扩展
   静态文件
     css, js, img, json, font文件等
-    
+================================
 DjangoTest
-  |____ static
+  |____ static（和tempaltes平级）
           |____ css
           |____ img
           |____ js
           |____ json
           |____ font
           |____ other
-           
+================================
+settings.py加上
+--------------------------------------
+STATIC_ROOT = 'static'
+--------------------------------------
+与settings.py平级的urls.py加上
+--------------------------------------
+from django.views import static
+from django.conf import settings
+
+    url(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static')
+--------------------------------------
+在html中使用时
+--------------------------------------
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+{#    <link rel="stylesheet" type="text/css" href="/static/myApp/css/style.css"/>#}
+    <link rel="stylesheet" type="text/css" href="{% static '/myApp/css/style.css' %}"/>
+    <script type="text/javascript" src="{% static '/myApp/js/js.js' %}"></script>
+</head>
+<body>
+    <img src="{% static '/myApp/img/lgqj.jpg' %}" alt="load failed">
+</body>
+</html>
+       
+中间件
+  一个轻量级、底层的插件，可以介入django的请求和响应
+  本质：一个python类
+  方法
+    __init__
+      不需要传参数，服务器响应第一个请求的时候自动调用，用于确定是否启用该中间件
+    process_request(self, request)
+    process_view(self, request)
+    process_template_response(self, request)
+    process_response(self, request)
+    process_exception(self, request)
+     
+
