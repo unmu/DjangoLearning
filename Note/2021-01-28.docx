@@ -217,4 +217,70 @@ from django.conf import settings
    --process_request--> url --process_view--> view --process_template_response--> templates --process_response-->
    ======================================
   定义中间件 
-    
+    创建文件（自定义中间件）
+======================================
+middleware
+  |____ myApp
+          |____ myMiddle.py
+======================================
+myMiddle.py
+---------------------------------------------
+from django.utils.deprecation import MiddlewareMixin
+
+class MyMiddle(MiddlewareMixin):
+    def process_request(self, request):
+        a = request.GET.get('a')
+        print('parameter -- get: ', a)
+---------------------------------------------
+settings.py - MIDDLEWARE 加上
+---------------------------------------------
+'middleware.myApp.myMiddle.MyMiddle'    # 路径
+---------------------------------------------
+    访问有效网站时 -- 如 http://127.0.0.1:8000/get1?a=1&b=2&c=3
+    可见黑屏终端有打印 parameter -- get:  1
+  上传图片
+    概述 -- 文件上传时，文件数据存储在request.FILE属性中
+    存储路径
+      在static目录下创建upfile目录用于存储接收上传的文件
+      配置settings.py文件
+        MEDIA_ROOT = os.path.join(BASE_DIR, r'static\upfile')   # windows下的路径
+upfile.html
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>upfile</title>
+</head>
+<body>
+    <form method="post" action="/savefile/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" />
+        <input type="submit" value="submit"/>
+    </form>
+</body>
+</html>
+---------------------------------------------
+urls.py
+---------------------------------------------
+    url(r'^upfile/$', views.upfile),
+    url(r'^savefile/$', views.savefile),
+---------------------------------------------
+views.py
+---------------------------------------------
+def upfile(request):
+    return render(request, 'myApp/upfile.html')
+
+def savefile(request):
+    if request.method == 'POST':
+        f = request.FILES['file']
+        filePath = os.path.join(settings.MEDIA_ROOT, f.name)
+        with open(filePath, 'wb') as fp:
+            for info in f.chunks():
+                fp.write(info)
+        return HttpResponse('upload file succeed')
+    else:
+        return HttpResponse('upload file failed')
+---------------------------------------------
+           
+  
