@@ -269,6 +269,9 @@ urls.py
 ---------------------------------------------
 views.py
 ---------------------------------------------
+import os
+from django.conf import settings
+
 def upfile(request):
     return render(request, 'myApp/upfile.html')
 
@@ -314,10 +317,12 @@ def savefile(request):
         5. previous_page_number() -- 返回上一页的页码，若上一页不存在则InvalidPage异常
         6. len() -- 返回当前页的数据（对象）个数
     Paginator和Page的关系
+    ==============================================
       Students.objects.all() ----> paginator对象
             ^                         |
             |                         |
             |_______ page对象 <--------
+    ==============================================
 stupage.html
 ---------------------------------------------
 <!DOCTYPE html>
@@ -349,6 +354,8 @@ stupage.html
 ---------------------------------------------
 views.py
 ---------------------------------------------
+from django.core.paginator import Paginator
+
 def stuPage(request, pageid):
     stuList = Students.stuObj2.all()
     paginator = Paginator(stuList, 3)   # 每页3行数据
