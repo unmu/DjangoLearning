@@ -238,6 +238,7 @@ settings.py - MIDDLEWARE 加上
 ---------------------------------------------
     访问有效网站时 -- 如 http://127.0.0.1:8000/get1?a=1&b=2&c=3
     可见黑屏终端有打印 parameter -- get:  1
+    
   上传图片
     概述 -- 文件上传时，文件数据存储在request.FILE属性中
     存储路径
@@ -276,11 +277,41 @@ def savefile(request):
         f = request.FILES['file']
         filePath = os.path.join(settings.MEDIA_ROOT, f.name)
         with open(filePath, 'wb') as fp:
-            for info in f.chunks():
+            for info in f.chunks():     # 文件流分段
                 fp.write(info)
         return HttpResponse('upload file succeed')
     else:
         return HttpResponse('upload file failed')
 ---------------------------------------------
-           
-  
+    可见static/upfile下新增文件
+    
+  分页
+    Paginator对象
+      创建对象
+        格式 -- Paginator(列表，整数)
+        返回值 -- 返回的分页对象
+      属性
+        count -- 对象总数
+        num_pages -- 页面总数
+        page_range -- 页码列表，{1, 2, 3, 4, 5}，页码从1开始
+      方法
+        page{num} -- 获得一个Page对象，如果提供的页码不存在，会抛出InvalidPage异常
+      异常
+        1. InvalidPage -- 当向page()传递的是一个无效的页码时抛出
+        2. PageNotAnInteger -- 当向page()传递的不是一个整数
+        3. EmptyPage -- 当向page()传递一个有效值，但是该页面没有数据时抛出
+    Page对象
+      创建对象 -- Paginator对象的page()方法返回得到Page()对象
+      属性
+        1. object_list -- 当前页上所有的数据（对象）列表
+        2. number -- 当前页的页码值
+        3. paginator -- 当前page对象关联的paginator对象
+      方法
+        1. has_next() -- 判断是否有下一页，有则True
+        2. has_previous() -- 判断是否上一页，有则True
+        3. has_other_pages() -- 判断是否有上一页或下一页，有则True
+        4. next_page_number() -- 返回下一页的页码，若下一页不存在则InvalidPage异常
+        5. previous_page_number() -- 返回上一页的页码，若上一页不存在则InvalidPage异常
+        6. len() -- 返回当前页的数据（对象）个数
+    Paginator和Page的关系
+ 
