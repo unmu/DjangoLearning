@@ -314,4 +314,50 @@ def savefile(request):
         5. previous_page_number() -- 返回上一页的页码，若上一页不存在则InvalidPage异常
         6. len() -- 返回当前页的数据（对象）个数
     Paginator和Page的关系
- 
+      Students.objects.all() ----> paginator对象
+            ^                         |
+            |                         |
+            |_______ page对象 <--------
+stupage.html
+---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>stupage</title>
+</head>
+<body>
+    <ul>
+        {% for stu in students %}
+        <li>{{ stu.sname }} - {{ stu.sgrade }}</li>
+        {% endfor %}
+    </ul>
+
+    <ul>
+        {% for index in students.paginator.page_range %}
+            {% if index == students.number %}
+                {{ index }}
+            {% else %}
+            <li>
+                <a href="/stupage/{{ index }}">{{ index }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+</html>
+---------------------------------------------
+views.py
+---------------------------------------------
+def stuPage(request, pageid):
+    stuList = Students.stuObj2.all()
+    paginator = Paginator(stuList, 3)   # 每页3行数据
+    page = paginator.page(pageid)
+    return render(request, 'myApp/stupage.html', {'students': page})
+---------------------------------------------
+urls.py
+---------------------------------------------
+    url(r'^stupage/(\d+)/$', views.stuPage),
+---------------------------------------------
+
+
