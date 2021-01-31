@@ -86,5 +86,24 @@ admin.site.register(Text)
 -----------------------------------------------------
     访问 http://127.0.0.1:8000/admin/myApp/text/add/
   
-
+celery
+  问题
+    用户发起request，并且要等待response返回，但是在视图中有一些耗时的操作，导致用户可能会等待很长时间
+    网站每隔一段时间要同步一次数据，但是http请求是需要触发的
+  celery来解决
+    将耗时的操作放到celery中执行
+    使用celery定时执行
+  celery
+    任务
+      本质是一个python函数，将耗时操作封装成一个函数
+    队列
+      将要执行的任务放队列里
+    工人
+      负责执行队列中的任务
+    代理
+      负责调度，在部署环境中使用redis
+    安装celery
+      pip install celery
+      pip install celery-with-redis
+      pip install django-celery 
 
