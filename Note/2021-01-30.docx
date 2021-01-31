@@ -1,0 +1,90 @@
+ajax
+  需要动态生成，请求JSON数据
+ajaxstu.html
+-----------------------------------------------------
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax</title>
+    <script type="text/javascript" src="{% static '/myApp/js/jquery.min.js' %}"></script>
+</head>
+<body>
+    <h1>Students List</h1>
+    <button id="btn" >display</button>
+    <script type="text/javascript" src="{% static '/myApp/js/js.js' %}"></script>
+
+</body>
+</html>
+-----------------------------------------------------
+views.py
+-----------------------------------------------------
+def ajaxStu(request):
+    return render(request, 'myApp/ajaxstu.html')
+
+def stuInfo(request):
+    stuList = Students.stuObj2.all()
+    # 数据放至列表
+    list2 = []
+    for stu in stuList:
+        list2.append([stu.sname, stu.sage])
+    return JsonResponse({'data': list2})
+-----------------------------------------------------
+urls.py
+-----------------------------------------------------
+    url(r'^ajaxstu/$', views.ajaxStu),
+    url(r'^stuinfo/$', views.stuInfo),
+-----------------------------------------------------
+js.js
+-----------------------------------------------------
+$(document).ready(function () {
+    document.getElementById('btn').onclick = function () {
+        $.ajax({
+            type: 'get',
+            url: '/stuinfo',
+            dataType: 'json',
+            success: function (data, status) {
+                console.log(data)
+                var d = data['data']
+                for (var i = 0; i < d.length; i++) {
+                    document.write('<p>' + d[i][0] + '</p>')
+                }
+            }
+        })
+    }
+})
+-----------------------------------------------------
+
+
+
+富文本
+  pip install django-tinymce
+  在站点中使用
+settings.py
+-----------------------------------------------------
+# 富文本
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'silver',
+    'width': 600,
+    'height': 400,
+}
+-----------------------------------------------------
+models.py
+-----------------------------------------------------
+from tinymce.models import HTMLField
+
+
+class Text(models.Model):
+    str = HTMLField()
+-----------------------------------------------------
+admin.py
+-----------------------------------------------------
+from .models import Text
+
+admin.site.register(Text)
+-----------------------------------------------------
+    访问 http://127.0.0.1:8000/admin/myApp/text/add/
+  
+
+
